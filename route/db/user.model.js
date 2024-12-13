@@ -13,7 +13,12 @@ function findUserByUsername(username) {
     return UserModel.find({username: username}).exec();
 }
 
+function findOneAndUpdate(query, updateData, options) {
+    return UserModel.findOneAndUpdate(query, updateData, options).exec();
+}
+
 module.exports = {
     createUser,
-    findUserByUsername
+    findUserByUsername,
+    findOneAndUpdate, // Export the new function
 };

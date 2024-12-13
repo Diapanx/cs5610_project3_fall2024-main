@@ -8,18 +8,24 @@ export default function UserDetail() {
     const [statusUpdateState, setStatusUpdateState] = useState([]);
     const [statusUpdateName, setStatusUpdateNameState] = useState('');
     const [errorState, setErrorState] = useState('');
+    const [loggedInUsername, setLoggedInUsername] = useState(null);
+    const [editBioState, setEditBioState] = useState('');
+    const [isEditingBio, setIsEditingBio] = useState(false);
 
     const params = useParams();
 
     useEffect(() => {
         getUserDetails();
         getStatusUpdate();
+        fetchLoggedInUsername();
     }, []);
 
     async function getUserDetails() {
         try {
             const response = await axios.get('/api/user/' + params.username);
-            setUserDetailState(response.data[0]); // Assume backend returns an array
+            const user = response.data[0]; // Assume backend returns an array
+            setUserDetailState(user);
+            setEditBioState(user.bio); // Initialize bio edit field
         } catch (error) {
             console.error('Error fetching user details:', error);
             setErrorState('Unable to load user');
@@ -34,6 +40,30 @@ export default function UserDetail() {
         } catch (error) {
             console.error('Error fetching status updates:', error);
             setStatusUpdateState([]); // Clear state if there's an error
+        }
+    }
+
+    async function fetchLoggedInUsername() {
+        try {
+            const response = await axios.get('/api/user/isLoggedIn', { withCredentials: true });
+            setLoggedInUsername(response.data); // Assume the API returns the logged-in username
+        } catch (error) {
+            console.error('Error fetching logged-in username:', error);
+            setLoggedInUsername(null);
+        }
+    }
+
+    async function updateBio() {
+        try {
+            // console.log('Updating bio for:', params.username);
+            // console.log('New bio:', editBioState);
+    
+            const response = await axios.put('/api/user/' + params.username, { bio: editBioState });
+            setUserDetailState({ ...userDetailsState, bio: editBioState });
+            setIsEditingBio(false); // Exit edit mode
+        } catch (error) {
+            console.error('Error updating bio:', error);
+            setErrorState('Error updating bio');
         }
     }
 
@@ -64,22 +94,49 @@ export default function UserDetail() {
     return (
         <div>
             <div>Name: {userDetailsState.username}</div>
-            <div>Bio: {userDetailsState.bio}</div>
-            <div>Join in: {new Date(userDetailsState.created).toISOString().slice(0, 10)}</div>
+
+            {/* Editable Bio Section */}
             <div>
-                <h2>Add new StatusUpdate</h2>
-                <input
-                    value={statusUpdateName}
-                    onChange={(event) => setStatusUpdateNameState(event.target.value)}
-                />
-                <div>
-                    <button onClick={createNewStatusUpdate}>Create New StatusUpdate</button>
-                </div>
+                <h3>Bio:</h3>
+                {loggedInUsername === params.username && isEditingBio ? (
+                    <div>
+                        <textarea
+                            value={editBioState}
+                            onChange={(event) => setEditBioState(event.target.value)}
+                        />
+                        <button onClick={updateBio}>Save</button>
+                        <button onClick={() => setIsEditingBio(false)}>Cancel</button>
+                    </div>
+                ) : (
+                    <div>
+                        <p>{userDetailsState.bio}</p>
+                        {loggedInUsername === params.username && (
+                            <button onClick={() => setIsEditingBio(true)}>Edit Bio</button>
+                        )}
+                    </div>
+                )}
             </div>
+
+            <div>Join in: {new Date(userDetailsState.created).toISOString().slice(0, 10)}</div>
+
+            {/* Only show the input and button for creating a post if the logged-in user matches the user being viewed */}
+            {loggedInUsername === params.username && (
+                <div>
+                    <h2>Add new StatusUpdate</h2>
+                    <input
+                        value={statusUpdateName}
+                        onChange={(event) => setStatusUpdateNameState(event.target.value)}
+                    />
+                    <div>
+                        <button onClick={createNewStatusUpdate}>Create New StatusUpdate</button>
+                    </div>
+                </div>
+            )}
+
             {statusUpdateState.length > 0 ? (
                 statusUpdateState.map((statusUpdate) => (
                     <div key={statusUpdate._id}>
-                        <Link to={`/statusUpdate/${statusUpdate._id}`}>{statusUpdate.username}</Link>
+                        <div>{statusUpdate.username}</div>
                         <div>Content: {statusUpdate.content}</div>
                         <div>Posted: {new Date(statusUpdate.created).toISOString().slice(0, 10)}</div>
                     </div>

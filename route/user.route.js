@@ -5,9 +5,7 @@ const jwtHelpers = require('./helpers/jwt')
 
 
 router.get('/isLoggedIn', function(request, response) {
-    console.log('isLoggedIn route called');
     const token = request.cookies.userToken;
-    console.log('Received token:', token);
     if (!token) {
         return response.status(401).send('User not logged in');
     }
@@ -16,8 +14,6 @@ router.get('/isLoggedIn', function(request, response) {
     if (!username) {
         return response.status(401).send('Invalid token');
     }
-
-    console.log('Decrypted username:', username);
     response.send(username);
 })
 
@@ -49,8 +45,6 @@ router.post('/login', async function(request, response) {
 
         if (retrievedUser.password === password) {
             const token = jwtHelpers.generateToken(username);
-            console.log(username)
-            console.log('Generated Token:', token);
             response.cookie('userToken', token);
             return response.send('Log in successful');
         } else {
@@ -81,6 +75,41 @@ router.post('/logout', function(request, response) {
     response.clearCookie('userToken'); // this doesn't delete the cookie, but expires it immediately
     response.send('Logged out successfully');
 })
+
+router.put('/:username', async (req, res) => {
+    const { username } = req.params;
+    const { bio } = req.body;
+
+    console.log('Updating bio for username:', username);
+    console.log('Bio to update:', bio);
+
+    try {
+        // Verify user exists before updating
+        // const user = await userModel.findOne({ username });
+        // console.log('User found:', user);
+
+        // if (!user) {
+        //     return res.status(404).send('User not found');
+        // }
+
+        // Perform the update
+        const updatedUser = await userModel.findOneAndUpdate(
+            { username }, // Query
+            { bio }, // Update
+            { new: true } // Return updated document
+        );
+
+        if (!updatedUser) {
+            return res.status(404).send('User not found after update');
+        }
+
+        console.log('Updated Bio:', updatedUser.bio);
+        res.send(updatedUser); // Send updated user info
+    } catch (error) {
+        console.error('Error updating bio:', error);
+        res.status(500).send('Internal server error');
+    }
+});
 
 
 
