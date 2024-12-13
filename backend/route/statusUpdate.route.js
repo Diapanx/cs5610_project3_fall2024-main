@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const statusUpdateModel = require('./db/statusUpdate.model');
+const statusUpdateModel = require('../db/statusUpdate.model');
 const jwtHelpers = require('./helpers/jwt');
 
 // Get all status updates

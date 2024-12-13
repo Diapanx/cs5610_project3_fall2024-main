@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const userModel = require('./db/user.model');
+const userModel = require('../db/user.model');
 const jwtHelpers = require('./helpers/jwt')
 
 
