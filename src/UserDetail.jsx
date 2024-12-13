@@ -11,6 +11,9 @@ export default function UserDetail() {
     const [loggedInUsername, setLoggedInUsername] = useState(null);
     const [editBioState, setEditBioState] = useState('');
     const [isEditingBio, setIsEditingBio] = useState(false);
+    const [editingPostId, setEditingPostId] = useState(null);
+    const [editingPostContent, setEditingPostContent] = useState('');
+    const [isCreatingPost, setIsCreatingPost] = useState(false);
 
     const params = useParams();
 
@@ -55,15 +58,27 @@ export default function UserDetail() {
 
     async function updateBio() {
         try {
-            // console.log('Updating bio for:', params.username);
-            // console.log('New bio:', editBioState);
-    
             const response = await axios.put('/api/user/' + params.username, { bio: editBioState });
             setUserDetailState({ ...userDetailsState, bio: editBioState });
             setIsEditingBio(false); // Exit edit mode
         } catch (error) {
             console.error('Error updating bio:', error);
             setErrorState('Error updating bio');
+        }
+    }
+
+    async function updatePost(postId) {
+        try {
+            await axios.put(`/api/statusUpdate/${postId}`, { content: editingPostContent });
+            setStatusUpdateState((prevState) =>
+                prevState.map((post) =>
+                    post._id === postId ? { ...post, content: editingPostContent } : post
+                )
+            );
+            setEditingPostId(null); // Exit edit mode for the post
+        } catch (error) {
+            console.error('Error updating post:', error);
+            setErrorState('Error updating post');
         }
     }
 
@@ -76,6 +91,7 @@ export default function UserDetail() {
         try {
             await axios.post('/api/statusUpdate', { content: statusUpdateName });
             setStatusUpdateNameState(''); // Clear input
+            setIsCreatingPost(false); // Hide the input box
             getStatusUpdate(); // Refresh status updates
         } catch (error) {
             console.error('Error creating new status update:', error);
@@ -93,7 +109,7 @@ export default function UserDetail() {
 
     return (
         <div>
-            <div>Name: {userDetailsState.username}</div>
+            <h1>{userDetailsState.username}</h1>
 
             {/* Editable Bio Section */}
             <div>
@@ -117,28 +133,58 @@ export default function UserDetail() {
                 )}
             </div>
 
-            <div>Join in: {new Date(userDetailsState.created).toISOString().slice(0, 10)}</div>
+            <div>Joined in: {new Date(userDetailsState.created).toISOString().slice(0, 10)}</div>
 
-            {/* Only show the input and button for creating a post if the logged-in user matches the user being viewed */}
+            {/* Only show the input box for new posts if the logged-in user matches the user being viewed */}
             {loggedInUsername === params.username && (
                 <div>
-                    <h2>Add new StatusUpdate</h2>
-                    <input
-                        value={statusUpdateName}
-                        onChange={(event) => setStatusUpdateNameState(event.target.value)}
-                    />
+                {!isCreatingPost ? (
+                    <button onClick={() => setIsCreatingPost(true)}>Add New Post</button>
+                ) : (
                     <div>
-                        <button onClick={createNewStatusUpdate}>Create New StatusUpdate</button>
+                        <h2>Add new post</h2>
+                        <input
+                            value={statusUpdateName}
+                            onChange={(event) => setStatusUpdateNameState(event.target.value)}
+                        />
+                        <div>
+                            <button onClick={createNewStatusUpdate}>Create</button>
+                            <button onClick={() => setIsCreatingPost(false)}>Cancel</button>
+                        </div>
                     </div>
-                </div>
+                )}
+            </div>
             )}
 
             {statusUpdateState.length > 0 ? (
                 statusUpdateState.map((statusUpdate) => (
                     <div key={statusUpdate._id}>
                         <div>{statusUpdate.username}</div>
-                        <div>Content: {statusUpdate.content}</div>
-                        <div>Posted: {new Date(statusUpdate.created).toISOString().slice(0, 10)}</div>
+                        {editingPostId === statusUpdate._id ? (
+                            <div>
+                                <textarea
+                                    value={editingPostContent}
+                                    onChange={(event) => setEditingPostContent(event.target.value)}
+                                />
+                                <button onClick={() => updatePost(statusUpdate._id)}>Save</button>
+                                <button onClick={() => setEditingPostId(null)}>Cancel</button>
+                            </div>
+                        ) : (
+                            <div>
+                                <div>Content: {statusUpdate.content}</div>
+                                <div>Posted: {new Date(statusUpdate.created).toISOString().slice(0, 10)}</div>
+                                {loggedInUsername === params.username && (
+                                    <button
+                                        onClick={() => {
+                                            setEditingPostId(statusUpdate._id);
+                                            setEditingPostContent(statusUpdate.content);
+                                        }}
+                                    >
+                                        Edit
+                                    </button>
+                                )}
+                            </div>
+                        )}
                     </div>
                 ))
             ) : (

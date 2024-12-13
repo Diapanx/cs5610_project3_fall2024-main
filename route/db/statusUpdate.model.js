@@ -20,9 +20,19 @@ function findStatusUpdateById(id) {
     return StatusUpdateModel.findById(id).exec();
 }
 
+function updateStatusUpdateById(id, updateData) {
+    return StatusUpdateModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+}
+
+function deleteStatusUpdateById(id) {
+    return StatusUpdateModel.findByIdAndDelete(id).exec();
+}
+
 module.exports = {
     findStatusUpdateByUsername,
     insertStatusUpdate,
     getAllStatusUpdate,
-    findStatusUpdateById
+    findStatusUpdateById,
+    updateStatusUpdateById,
+    deleteStatusUpdateById, // Export the delete function
 };
