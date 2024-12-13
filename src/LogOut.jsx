@@ -1,21 +1,28 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import './style/Homepage.css';
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function IsLoggedIn() {
+    const navigate = useNavigate();
+
     useEffect(() => {
-        logOutUser()
+        logOutUser();
     }, []);
 
     async function logOutUser() {
-        const response = await axios.post('/api/user/logout')
+        try {
+            await axios.post('/api/user/logout', {}, { withCredentials: true });
+            console.log('User logged out successfully');
+            navigate('/'); // Redirect to the homepage after logout
+        } catch (error) {
+            console.error('Error logging out:', error.response ? error.response.data : error.message);
+        }
     }
 
-    return (<div>
-        <h1>User is logged out.</h1>
-
-    </div>)
-
-
+    return (
+        <div>
+            <h1>User is logged out.</h1>
+        </div>
+    );
 }

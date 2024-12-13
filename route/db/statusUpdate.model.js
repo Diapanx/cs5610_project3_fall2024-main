@@ -12,8 +12,8 @@ function getAllStatusUpdate() {
     return StatusUpdateModel.find().exec();
 }
 
-function findStatusUpdateByUser(user) {
-    return StatusUpdateModel.find({user: user}).exec();
+function findStatusUpdateByUsername(username) {
+    return StatusUpdateModel.find({username: username}).exec();
 }
 
 function findStatusUpdateById(id) {
@@ -21,7 +21,7 @@ function findStatusUpdateById(id) {
 }
 
 module.exports = {
-    findStatusUpdateByUser,
+    findStatusUpdateByUsername,
     insertStatusUpdate,
     getAllStatusUpdate,
     findStatusUpdateById

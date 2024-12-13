@@ -1,65 +1,85 @@
 const express = require('express');
 const router = express.Router();
 const statusUpdateModel = require('./db/statusUpdate.model');
-const jwtHelpers = require('./helpers/jwt')
+const jwtHelpers = require('./helpers/jwt');
 
-
-// http://localhost:3000/api/post/
+// Get all status updates
 router.get('/', async function(req, res) {
+    try {
+        const statusUpdateList = await statusUpdateModel.getAllStatusUpdate();
+        res.send(statusUpdateList);
+    } catch (error) {
+        res.status(500).send("Error fetching status updates: " + error.message);
+    }
+});
 
-    const statusUpdateList = await statusUpdateModel.getAllStatusUpdate();
-
-    res.send(statusUpdateList);
-
-})
-
-// find statusUpdates by user
-router.get('/:username', async function(req, res) {
-
-    // const owner = jwtHelpers.decrypt(req.cookies.statusUpdateToken);
+// Get status updates by user
+router.get('/user/:username', async function(req, res) {
     const username = req.params.username;
 
-    const statusUpdateList = await statusUpdateModel.findStatusUpdateByUser(username);
-
-    // res.cookie("huntersFavStatusUpdate", "Pikachu");
-    res.send(statusUpdateList);
-
-})
-
-router.get('/:statusUpdateId', async function(req, res) {
-    const owner = jwtHelpers.decrypt(req.cookies.statusUpdateToken);  
-    const statusUpdateId = req.params.statusUpdateId;
-    // const cookies = req.cookies;
-    // console.log("This is my fav statusUpdate: ", cookies.huntersFavStatusUpdate);
     try {
-        const statusUpdate = await statusUpdateModel.findStatusUpdateById(statusUpdateId);   
-        if(statusUpdate.owner !== owner) {
-            return res.status(404).send("You do not have permission to access statusUpdate " + req.params.statusUpdateId);
-        }      
-        return res.send(statusUpdate);
+        const statusUpdateList = await statusUpdateModel.findStatusUpdateByUsername(username);
+        res.send(statusUpdateList);
     } catch (error) {
-        res.status(404)
-        res.send("No statusUpdate with ID " + req.params.statusUpdateId + " found :(");  
+        res.status(500).send("Error fetching status updates for user: " + username);
     }
-})
+});
 
+// Get status update by ID
+router.get('/:statusUpdateId', async function(req, res) {
+    const token = req.cookies.statusUpdateToken;
+    if (!token) {
+        return res.status(401).send("Unauthorized: No token provided.");
+    }
+
+    const owner = jwtHelpers.decrypt(token);
+    if (!owner) {
+        return res.status(401).send("Unauthorized: Invalid token.");
+    }
+
+    const statusUpdateId = req.params.statusUpdateId;
+
+    try {
+        const statusUpdate = await statusUpdateModel.findStatusUpdateById(statusUpdateId);
+        if (!statusUpdate) {
+            return res.status(404).send("No status update with ID " + statusUpdateId + " found.");
+        }
+        if (statusUpdate.username !== owner) {
+            return res.status(403).send("Forbidden: You do not have access to this status update.");
+        }
+        res.send(statusUpdate);
+    } catch (error) {
+        res.status(500).send("Error fetching status update: " + error.message);
+    }
+});
+
+// Create a new status update
 router.post('/', async function(req, res) {
-    const newStatusUpdate = {};
-
-    if(!req.body.content) {
-        res.status(400);
-        return res.send('Some values for new statusUpdatee missing: ' + JSON.stringify(req.body));
+    if (!req.body.content) {
+        return res.status(400).send('Content is required for a new status update');
     }
 
-    newStatusUpdate.content = req.body.content;
+    const token = req.cookies.userToken;
+    if (!token) {
+        return res.status(401).send("Unauthorized: No token provided.");
+    }
 
-    const owner = jwtHelpers.decrypt(req.cookies.statusUpdateToken);
-    newStatusUpdate.username = owner;
+    const owner = jwtHelpers.decrypt(token);
+    if (!owner) {
+        return res.status(401).send("Unauthorized: Invalid token.");
+    }
 
-    const statusUpdateDBResponse = await statusUpdateModel.insertStatusUpdate(newStatusUpdate);
+    const newStatusUpdate = {
+        content: req.body.content,
+        username: owner,
+    };
 
-    res.send(statusUpdateDBResponse);
-})
-
+    try {
+        const statusUpdateDBResponse = await statusUpdateModel.insertStatusUpdate(newStatusUpdate);
+        res.send(statusUpdateDBResponse);
+    } catch (error) {
+        res.status(500).send("Error inserting status update: " + error.message);
+    }
+});
 
 module.exports = router;

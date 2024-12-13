@@ -8,9 +8,8 @@ import {
 import Homepage from './Homepage.jsx';
 import UserDetail from './UserDetail.jsx';
 import Login from './Login.jsx';
-import Signup from './Signup.jsx';
-import IsLoggedIn from './IsLoggedIn.jsx';
 import LogOut from './LogOut.jsx';
+import Signup from './Signup.jsx';
 import Header from './Header.jsx';
 
 const router = createBrowserRouter([
@@ -44,14 +43,6 @@ const router = createBrowserRouter([
     <div>
     <Header />
     <Signup />
-  </div>
-  },
-  {
-    path: '/isLoggedIn',
-    element: 
-    <div>
-    <Header />
-    <IsLoggedIn />
   </div>
   },
   {

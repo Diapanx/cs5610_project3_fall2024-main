@@ -4,6 +4,23 @@ const userModel = require('./db/user.model');
 const jwtHelpers = require('./helpers/jwt')
 
 
+router.get('/isLoggedIn', function(request, response) {
+    console.log('isLoggedIn route called');
+    const token = request.cookies.userToken;
+    console.log('Received token:', token);
+    if (!token) {
+        return response.status(401).send('User not logged in');
+    }
+
+    const username = jwtHelpers.decrypt(token);
+    if (!username) {
+        return response.status(401).send('Invalid token');
+    }
+
+    console.log('Decrypted username:', username);
+    response.send(username);
+})
+
 router.get('/:username', async function(req, res) {
     // const owner = jwtHelpers.decrypt(req.cookies.userToken);  
     const username = req.params.username;
@@ -65,21 +82,6 @@ router.post('/logout', function(request, response) {
     response.send('Logged out successfully');
 })
 
-router.get('/isLoggedIn', function(request, response) {
-    console.log('isLoggedIn route called');
-    const token = request.cookies.userToken;
-    console.log('Received token:', token);
-    if (!token) {
-        return response.status(401).send('User not logged in');
-    }
 
-    const username = jwtHelpers.decrypt(token);
-    if (!username) {
-        return response.status(401).send('Invalid token');
-    }
-
-    console.log('Decrypted username:', username);
-    response.send(username);
-})
 
 module.exports = router;

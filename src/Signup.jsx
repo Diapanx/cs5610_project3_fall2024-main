@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 export default function Signup() {
     const [usernameState, setUsernameState] = useState('');
     const [passwordState, setPasswordState] = useState('');
+    const navigate = useNavigate();
 
     function onInputUsername(event) {
         const username = event.target.value;
@@ -22,6 +23,7 @@ export default function Signup() {
             username: usernameState, 
             password: passwordState
         })
+        navigate('/');
 
     }
 
