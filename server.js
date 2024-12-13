@@ -10,11 +10,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// const cors = require('cors');
-// app.use(cors({
-//     origin: 'http://localhost:5173', // Frontend origin
-//     credentials: true // Allow cookies
-// }));
 
 app.use('/api/statusUpdate', statusUpdate);
 app.use('/api/user', user);
@@ -27,6 +22,7 @@ mongoose.connect(mongoEndpoint, { useNewUrlParser: true });
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Error connecting to MongoDB:'));
 
-app.listen(3000, function() {
-    console.log('Server started');
-})
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
+});
