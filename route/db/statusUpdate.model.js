@@ -34,5 +34,5 @@ module.exports = {
     getAllStatusUpdate,
     findStatusUpdateById,
     updateStatusUpdateById,
-    deleteStatusUpdateById, // Export the delete function
+    deleteStatusUpdateById,
 };

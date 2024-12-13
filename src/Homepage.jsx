@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import './style/Homepage.css';
+import './style/style.css';
 import { Link } from "react-router-dom";
+
 
 export default function Homepage() {
     const [statusUpdateState, setStatusUpdateState] = useState([]);
@@ -21,12 +22,12 @@ export default function Homepage() {
     }
 
     return (
-        <div>
+        <div class="about-containers">
             {statusUpdateState.map((statusUpdate) => (
-                <div key={statusUpdate._id}>
-                    <Link to={`/user/${statusUpdate.username}`}>{statusUpdate.username}</Link>
-                    <div>Content: {statusUpdate.content}</div>
-                    <div>Posted: {new Date(statusUpdate.created).toISOString().slice(0, 10)}</div>
+                <div key={statusUpdate._id} class="details-container color-container">
+                    <div id="username"><Link to={`/user/${statusUpdate.username}`}>{statusUpdate.username}</Link></div>
+                    <div class="text-container">{statusUpdate.content}</div>
+                    <div id="footer">{new Date(statusUpdate.created).toISOString().slice(0, 10)}</div>
                 </div>
             ))}
         </div>

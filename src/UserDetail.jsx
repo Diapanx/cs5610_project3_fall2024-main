@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { Link } from "react-router-dom";
+import './style/style.css';
 
 export default function UserDetail() {
     const [userDetailsState, setUserDetailState] = useState(null);
@@ -82,6 +82,16 @@ export default function UserDetail() {
         }
     }
 
+    async function deletePost(postId) {
+        try {
+            await axios.delete(`/api/statusUpdate/${postId}`, { withCredentials: true });
+            setStatusUpdateState((prevState) => prevState.filter((post) => post._id !== postId));
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            setErrorState('Error deleting post');
+        }
+    }
+
     async function createNewStatusUpdate() {
         if (!statusUpdateName) {
             setErrorState('Please add valid StatusUpdate');
@@ -109,37 +119,38 @@ export default function UserDetail() {
 
     return (
         <div>
-            <h1>{userDetailsState.username}</h1>
-
+            <h1 class="title">{userDetailsState.username}</h1>
+            <div id="join">Joined in: {new Date(userDetailsState.created).toISOString().slice(0, 10)}</div>
             {/* Editable Bio Section */}
+
+
+
+            <div class="about-containers">
             <div>
-                <h3>Bio:</h3>
+                
                 {loggedInUsername === params.username && isEditingBio ? (
                     <div>
                         <textarea
                             value={editBioState}
                             onChange={(event) => setEditBioState(event.target.value)}
                         />
-                        <button onClick={updateBio}>Save</button>
-                        <button onClick={() => setIsEditingBio(false)}>Cancel</button>
+                        <button onClick={updateBio} class="btn btn-color-2 project-btn">Save</button>
+                        <button onClick={() => setIsEditingBio(false)} class="btn btn-color-2 project-btn">Cancel</button>
                     </div>
                 ) : (
-                    <div>
-                        <p>{userDetailsState.bio}</p>
+                    <div id="bio">
+                        <p class="section__text__p1">{userDetailsState.bio}</p>
                         {loggedInUsername === params.username && (
-                            <button onClick={() => setIsEditingBio(true)}>Edit Bio</button>
+                            <button onClick={() => setIsEditingBio(true)} class="btn btn-color-2 project-btn">Edit</button>
                         )}
                     </div>
                 )}
             </div>
-
-            <div>Joined in: {new Date(userDetailsState.created).toISOString().slice(0, 10)}</div>
-
             {/* Only show the input box for new posts if the logged-in user matches the user being viewed */}
             {loggedInUsername === params.username && (
                 <div>
                 {!isCreatingPost ? (
-                    <button onClick={() => setIsCreatingPost(true)}>Add New Post</button>
+                    <button onClick={() => setIsCreatingPost(true)} class="btn btn-color-2 project-btn">Add</button>
                 ) : (
                     <div>
                         <h2>Add new post</h2>
@@ -148,41 +159,45 @@ export default function UserDetail() {
                             onChange={(event) => setStatusUpdateNameState(event.target.value)}
                         />
                         <div>
-                            <button onClick={createNewStatusUpdate}>Create</button>
-                            <button onClick={() => setIsCreatingPost(false)}>Cancel</button>
+                            <button onClick={createNewStatusUpdate} class="btn btn-color-2 project-btn">Create</button>
+                            <button onClick={() => setIsCreatingPost(false)} class="btn btn-color-2 project-btn">Cancel</button>
                         </div>
                     </div>
                 )}
             </div>
             )}
-
             {statusUpdateState.length > 0 ? (
                 statusUpdateState.map((statusUpdate) => (
-                    <div key={statusUpdate._id}>
-                        <div>{statusUpdate.username}</div>
+                    <div key={statusUpdate._id} class="details-container color-container">
+                        <div class='top-line'>
+                        <div id="username">{statusUpdate.username}</div>
+                        {loggedInUsername === params.username && (
+                                    <div class="btn-container">
+                                        <button class="btn btn-color-2 project-btn" onClick={() => deletePost(statusUpdate._id)}>Delete</button>
+                                        <button class="btn btn-color-2 project-btn"
+                                            onClick={() => {
+                                                setEditingPostId(statusUpdate._id);
+                                                setEditingPostContent(statusUpdate.content);
+                                            }}
+                                        >
+                                            Edit
+                                        </button>
+                                    </div>
+                                )}
+                        </div>
                         {editingPostId === statusUpdate._id ? (
                             <div>
                                 <textarea
                                     value={editingPostContent}
                                     onChange={(event) => setEditingPostContent(event.target.value)}
                                 />
-                                <button onClick={() => updatePost(statusUpdate._id)}>Save</button>
-                                <button onClick={() => setEditingPostId(null)}>Cancel</button>
+                                <button class="btn btn-color-2 project-btn" onClick={() => updatePost(statusUpdate._id)}>Save</button>
+                                <button class="btn btn-color-2 project-btn" onClick={() => setEditingPostId(null)}>Cancel</button>
                             </div>
                         ) : (
                             <div>
-                                <div>Content: {statusUpdate.content}</div>
-                                <div>Posted: {new Date(statusUpdate.created).toISOString().slice(0, 10)}</div>
-                                {loggedInUsername === params.username && (
-                                    <button
-                                        onClick={() => {
-                                            setEditingPostId(statusUpdate._id);
-                                            setEditingPostContent(statusUpdate.content);
-                                        }}
-                                    >
-                                        Edit
-                                    </button>
-                                )}
+                                <div class="text-container">{statusUpdate.content}</div>
+                                <div id='footer'>{new Date(statusUpdate.created).toISOString().slice(0, 10)}</div>
                             </div>
                         )}
                     </div>
@@ -190,6 +205,7 @@ export default function UserDetail() {
             ) : (
                 <div>No status updates found.</div>
             )}
+            </div>
         </div>
     );
 }
