@@ -142,7 +142,7 @@ export default function UserDetail() {
                         {loggedInUsername === params.username && (
                             <button onClick={() => setIsEditingBio(true)} className="image-btn">
                             <img 
-                              src="../public/edit.png" 
+                              src="/edit.png" 
                               alt="Edit bio" 
                               style={{ width: '15px', height: '15px' }} 
                             />
@@ -157,7 +157,7 @@ export default function UserDetail() {
                 {!isCreatingPost ? (
                     <button onClick={() => setIsCreatingPost(true)} className="add-post-btn">
                     <img 
-                      src="../public/plus.png" 
+                      src="/plus.png" 
                       alt="Add post" 
                       style={{ width: '27px', height: '27px' }} 
                     /></button>
@@ -185,7 +185,7 @@ export default function UserDetail() {
                                     <div class="btn-container">
                                         <button class="btn btn-color-2 project-btn" onClick={() => deletePost(statusUpdate._id)}className="image-btn">
                             <img 
-                              src="../public/garbage.png" 
+                              src="/garbage.png" 
                               alt="Delete post" 
                               style={{ width: '15px', height: '15px' }} 
                             /></button>
@@ -196,7 +196,7 @@ export default function UserDetail() {
                                             }}
                                             className="image-btn">
                                             <img 
-                                              src="../public/edit.png" 
+                                              src="/edit.png" 
                                               alt="Edit post" 
                                               style={{ width: '15px', height: '15px' }} 
                                             />
