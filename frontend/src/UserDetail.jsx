@@ -131,7 +131,7 @@ export default function UserDetail() {
                             value={editBioState}
                             onChange={(event) => setEditBioState(event.target.value)}
                         />
-                        <div>
+                        <div class='btn-container'>
                             <button onClick={updateBio} class="btn btn-color-2 project-btn">Save</button>
                             <button onClick={() => setIsEditingBio(false)} class="btn btn-color-2 project-btn">Cancel</button>
                         </div>
@@ -168,7 +168,7 @@ export default function UserDetail() {
                             value={statusUpdateName}
                             onChange={(event) => setStatusUpdateNameState(event.target.value)}
                         />
-                        <div>
+                        <div class='btn-container'>
                             <button onClick={createNewStatusUpdate} class="btn btn-color-2 project-btn">Create</button>
                             <button onClick={() => setIsCreatingPost(false)} class="btn btn-color-2 project-btn">Cancel</button>
                         </div>
@@ -210,7 +210,7 @@ export default function UserDetail() {
                                     value={editingPostContent}
                                     onChange={(event) => setEditingPostContent(event.target.value)}
                                 />
-                                <div>
+                                <div class='btn-container'>
                                     <button class="btn btn-color-2 project-btn" onClick={() => updatePost(statusUpdate._id)}>Save</button>
                                     <button class="btn btn-color-2 project-btn" onClick={() => setEditingPostId(null)}>Cancel</button>
                                 </div>

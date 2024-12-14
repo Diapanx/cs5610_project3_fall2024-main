@@ -48,7 +48,7 @@ export default function Header() {
         {username ? (
           <>
             <li className="dropdown">
-              <button className="btn nav-link" onClick={toggleDropdown}>
+              <button className="button nav-link" onClick={toggleDropdown}>
                 {username}
               </button>
               {dropdownOpen && (

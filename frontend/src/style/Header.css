@@ -32,7 +32,7 @@ ul {
     text-decoration-color: rgb(181, 181, 181);
 }
 
-.btn {
+.button {
     background: none;
     border: none;
     color: inherit;
@@ -66,4 +66,5 @@ ul {
     text-decoration: underline;
     text-underline-offset: 0.2rem;
     text-decoration-color: rgb(181, 181, 181);
+    cursor: pointer;
 }
