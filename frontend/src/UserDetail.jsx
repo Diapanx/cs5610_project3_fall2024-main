@@ -28,6 +28,7 @@ export default function UserDetail() {
             const response = await axios.get('/api/user/' + params.username);
             const user = response.data[0]; // Assume backend returns an array
             setUserDetailState(user);
+            console.log(user.bio)
             setEditBioState(user.bio); // Initialize bio edit field
         } catch (error) {
             console.error('Error fetching user details:', error);
@@ -138,29 +139,46 @@ export default function UserDetail() {
                     </div>
                 ) : (
                     <div id="bio">
-                        <p class="section__text__p1">{userDetailsState.bio}</p>
-                        {loggedInUsername === params.username && (
-                            <button onClick={() => setIsEditingBio(true)} className="image-btn">
-                            <img 
-                              src="/edit.png" 
-                              alt="Edit bio" 
-                              style={{ width: '15px', height: '15px' }} 
-                            />
-                          </button>
+                        {userDetailsState.bio ? (
+                            <>
+                                <p className="section__text__p1">{userDetailsState.bio}</p>
+                                {loggedInUsername === params.username && (
+                                    <button onClick={() => setIsEditingBio(true)} className="image-btn">
+                                        <img 
+                                            src="/edit.png" 
+                                            alt="Edit bio" 
+                                            style={{ width: '15px', height: '15px' }} 
+                                        />
+                                    </button>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <p className="section__text__p1">Try<span style={{ display: 'inline-block', marginLeft: '5px', verticalAlign: 'middle' }}><button onClick={() => setIsEditingBio(true)} className="image-btn">
+                                        <img 
+                                            src="/edit.png" 
+                                            alt="Edit bio" 
+                                            style={{ width: '15px', height: '15px' }} 
+                                        />
+                                    </button></span> to describe  yourself!</p>
+                                    
+                                
+                            </>
                         )}
                     </div>
                 )}
             </div>
             {/* Only show the input box for new posts if the logged-in user matches the user being viewed */}
-            {loggedInUsername === params.username && (
+            {loggedInUsername === params.username &&(
                 <div>
                 {!isCreatingPost ? (
+                    <div>Try<span style={{ display: 'inline-block', margin: '5px', verticalAlign: 'middle' }}>
                     <button onClick={() => setIsCreatingPost(true)} className="add-post-btn">
                     <img 
                       src="/plus.png" 
                       alt="Add post" 
                       style={{ width: '27px', height: '27px' }} 
-                    /></button>
+                    /></button></span>to post!</div>
                 ) : (
                     <div class='edit'>
                         <h2>Add new post</h2>
@@ -224,7 +242,7 @@ export default function UserDetail() {
                     </div>
                 ))
             ) : (
-                <div>You haven't posted anything. Try the '+' button to post!</div>
+                <div>You haven't posted anything.</div>
             )}
             </div>
         </div>

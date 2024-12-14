@@ -9,5 +9,8 @@ exports.UserSchema = new Schema({
         type: String, required: true
     },
     created: { type: Date, default: Date.now() },
-    bio: { type: String }
+    bio: {
+        type: String,
+        default: ''
+    }
 }, { collection : 'users' });
