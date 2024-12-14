@@ -68,3 +68,9 @@ ul {
     text-decoration-color: rgb(181, 181, 181);
     cursor: pointer;
 }
+
+.home {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

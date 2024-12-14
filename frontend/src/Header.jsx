@@ -44,7 +44,11 @@ export default function Header() {
   return (
     <nav>
       <ul>
-        <li><Link className='nav-link' to="/">Home</Link></li>
+        <li><Link className='nav-link' to="/"><img class='home'
+                              src="/panda.png" 
+                              alt="Panda icon" 
+                              style={{ width: '10vh', height: '10vh' }} 
+                            /></Link></li>
         {username ? (
           <>
             <li className="dropdown">
