@@ -23,17 +23,17 @@ export default function Login() {
   }
 
   return (
-    <div>
-      <h1>Login Page</h1>
+    <div class='page'>
+      <h1 class="title">Log In</h1>
       <div>
         <h3>Username:</h3>
-        <input value={usernameState} onChange={(e) => setUsernameState(e.target.value)} />
+        <input className="custom-input" value={usernameState} onChange={(e) => setUsernameState(e.target.value)} />
       </div>
       <div>
         <h3>Password:</h3>
-        <input type="password" value={passwordState} onChange={(e) => setPasswordState(e.target.value)} />
+        <input className="custom-input" type="password" value={passwordState} onChange={(e) => setPasswordState(e.target.value)} />
       </div>
-      <button onClick={onSubmit}>Click here to login</button>
+      <button class='btn btn-color-2' onClick={onSubmit}>log in</button>
     </div>
   );
 }

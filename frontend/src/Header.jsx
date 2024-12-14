@@ -59,7 +59,7 @@ export default function Header() {
                       className='option'
                       to="/"
                       onClick={(e) => {
-                        e.preventDefault(); // Prevent navigation if needed
+                        // e.preventDefault(); // Prevent navigation if needed
                         logOutUser();
                         toggleDropdown();
                       }}

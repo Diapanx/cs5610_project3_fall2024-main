@@ -122,26 +122,31 @@ export default function UserDetail() {
             <h1 class="title">{userDetailsState.username}</h1>
             <div id="join">Joined in: {new Date(userDetailsState.created).toISOString().slice(0, 10)}</div>
             {/* Editable Bio Section */}
-
-
-
             <div class="about-containers">
             <div>
                 
                 {loggedInUsername === params.username && isEditingBio ? (
-                    <div>
-                        <textarea
+                    <div class='edit'>
+                        <textarea className="custom-input-2"
                             value={editBioState}
                             onChange={(event) => setEditBioState(event.target.value)}
                         />
-                        <button onClick={updateBio} class="btn btn-color-2 project-btn">Save</button>
-                        <button onClick={() => setIsEditingBio(false)} class="btn btn-color-2 project-btn">Cancel</button>
+                        <div>
+                            <button onClick={updateBio} class="btn btn-color-2 project-btn">Save</button>
+                            <button onClick={() => setIsEditingBio(false)} class="btn btn-color-2 project-btn">Cancel</button>
+                        </div>
                     </div>
                 ) : (
                     <div id="bio">
                         <p class="section__text__p1">{userDetailsState.bio}</p>
                         {loggedInUsername === params.username && (
-                            <button onClick={() => setIsEditingBio(true)} class="btn btn-color-2 project-btn">Edit</button>
+                            <button onClick={() => setIsEditingBio(true)} className="image-btn">
+                            <img 
+                              src="../public/edit.png" 
+                              alt="Edit bio" 
+                              style={{ width: '15px', height: '15px' }} 
+                            />
+                          </button>
                         )}
                     </div>
                 )}
@@ -150,11 +155,16 @@ export default function UserDetail() {
             {loggedInUsername === params.username && (
                 <div>
                 {!isCreatingPost ? (
-                    <button onClick={() => setIsCreatingPost(true)} class="btn btn-color-2 project-btn">Add</button>
+                    <button onClick={() => setIsCreatingPost(true)} className="add-post-btn">
+                    <img 
+                      src="../public/plus.png" 
+                      alt="Add post" 
+                      style={{ width: '27px', height: '27px' }} 
+                    /></button>
                 ) : (
-                    <div>
+                    <div class='edit'>
                         <h2>Add new post</h2>
-                        <input
+                        <textarea className="custom-input-2"
                             value={statusUpdateName}
                             onChange={(event) => setStatusUpdateNameState(event.target.value)}
                         />
@@ -171,28 +181,39 @@ export default function UserDetail() {
                     <div key={statusUpdate._id} class="details-container color-container">
                         <div class='top-line'>
                         <div id="username">{statusUpdate.username}</div>
-                        {loggedInUsername === params.username && (
+                        {loggedInUsername === params.username && editingPostId !== statusUpdate._id && (
                                     <div class="btn-container">
-                                        <button class="btn btn-color-2 project-btn" onClick={() => deletePost(statusUpdate._id)}>Delete</button>
+                                        <button class="btn btn-color-2 project-btn" onClick={() => deletePost(statusUpdate._id)}className="image-btn">
+                            <img 
+                              src="../public/garbage.png" 
+                              alt="Delete post" 
+                              style={{ width: '15px', height: '15px' }} 
+                            /></button>
                                         <button class="btn btn-color-2 project-btn"
                                             onClick={() => {
                                                 setEditingPostId(statusUpdate._id);
                                                 setEditingPostContent(statusUpdate.content);
                                             }}
-                                        >
-                                            Edit
+                                            className="image-btn">
+                                            <img 
+                                              src="../public/edit.png" 
+                                              alt="Edit post" 
+                                              style={{ width: '15px', height: '15px' }} 
+                                            />
                                         </button>
                                     </div>
                                 )}
                         </div>
                         {editingPostId === statusUpdate._id ? (
                             <div>
-                                <textarea
+                                <textarea className="custom-input-2"
                                     value={editingPostContent}
                                     onChange={(event) => setEditingPostContent(event.target.value)}
                                 />
-                                <button class="btn btn-color-2 project-btn" onClick={() => updatePost(statusUpdate._id)}>Save</button>
-                                <button class="btn btn-color-2 project-btn" onClick={() => setEditingPostId(null)}>Cancel</button>
+                                <div>
+                                    <button class="btn btn-color-2 project-btn" onClick={() => updatePost(statusUpdate._id)}>Save</button>
+                                    <button class="btn btn-color-2 project-btn" onClick={() => setEditingPostId(null)}>Cancel</button>
+                                </div>
                             </div>
                         ) : (
                             <div>
