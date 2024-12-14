@@ -21,7 +21,7 @@ export default function UserDetail() {
         getUserDetails();
         getStatusUpdate();
         fetchLoggedInUsername();
-    }, []);
+    }, [params.username]);
 
     async function getUserDetails() {
         try {
@@ -224,7 +224,7 @@ export default function UserDetail() {
                     </div>
                 ))
             ) : (
-                <div>No status updates found.</div>
+                <div>You haven't posted anything. Try the '+' button to post!</div>
             )}
             </div>
         </div>
