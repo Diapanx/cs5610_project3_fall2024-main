@@ -153,7 +153,7 @@ export default function UserDetail() {
                                 )}
                             </>
                         ) : (
-                            <>
+                            <>{loggedInUsername === params.username && (
                                 <p className="section__text__p1">Try<span style={{ display: 'inline-block', marginLeft: '5px', verticalAlign: 'middle' }}><button onClick={() => setIsEditingBio(true)} className="image-btn">
                                         <img 
                                             src="/edit.png" 
@@ -162,7 +162,7 @@ export default function UserDetail() {
                                         />
                                     </button></span> to describe  yourself!</p>
                                     
-                                
+                                )} 
                             </>
                         )}
                     </div>
@@ -242,7 +242,7 @@ export default function UserDetail() {
                     </div>
                 ))
             ) : (
-                <div>You haven't posted anything.</div>
+                <div>{params.username} haven't posted anything.</div>
             )}
             </div>
         </div>
